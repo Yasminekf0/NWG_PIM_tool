@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+}
+
+:root {
+  --primary: #2D6A4F;
+  --primary-hover: #40916C;
+  --light-accent: #D8F3DC;
+  --background: #F8F9FA;
+  --card: #FFFFFF;
+  --text-primary: #1B1B1B;
+  --text-secondary: #6B7280;
+  --border: #E5E7EB;
+  --border-dashed: #D1D5DB;
+}
