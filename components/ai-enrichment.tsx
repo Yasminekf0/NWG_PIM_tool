@@ -89,26 +89,68 @@ export function AIEnrichment({ product }: AIEnrichmentProps) {
 
   const handleGenerate = async () => {
     if (!product) return;
-
     setIsGenerating(true);
 
-    // TODO: Implement actual API call to Groq/Llama 3.3 for content generation
-    // Simulating API delay
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 15000);
 
-    // Mock generated content based on product
-    const mockContent: AIContent = {
-      seoTitle: `${product.name} – ${product.productType} | Wellvita`,
-      metaDescription: `Support your health with ${product.name}. ${product.description.slice(0, 80)}... ${product.amountOfPills} tablets, ${product.daysOfUsage} day supply. Free delivery.`,
-      productBullets: [
-        `Premium quality ${product.productType.toLowerCase()} formula`,
-        `Contains ${product.amountOfPills} tablets for ${product.daysOfUsage} days of daily use`,
-        `${product.deliveryFrequency} delivery available with free shipping`,
-      ],
-    };
+      const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method: "POST",
+        signal: controller.signal,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_GROQ_API_KEY}`,
+        },
+        body: JSON.stringify({
+          model: "llama-3.3-70b-versatile",
+          temperature: 0.4,
+          messages: [
+            {
+              role: "system",
+              content:
+                "You are a product content specialist for Nordic Well Group, a Danish supplements and vitamins brand. You write clear, benefit-focused product content in English for the Wellvita brand. Your tone is professional, trustworthy, and health-focused. Never make unsubstantiated medical claims. Return only valid JSON with no markdown, no backticks, no explanation.",
+            },
+            {
+              role: "user",
+              content: `Generate enriched product content for this supplement. Return ONLY this JSON structure, nothing else:
+{
+  "seoTitle": "string, max 60 chars",
+  "metaDescription": "string, max 155 chars",
+  "productBullets": ["string", "string", "string"]
+}
 
-    setGeneratedContent(mockContent);
-    setIsGenerating(false);
+Product name: ${product.name}
+Product type: ${product.productType}
+Category: ${product.type}
+Pills/units: ${product.amountOfPills}
+Days of usage: ${product.daysOfUsage}
+Description: ${product.description}`,
+            },
+          ],
+        }),
+      });
+
+      clearTimeout(timeout);
+      const data = await response.json();
+      const raw = data.choices?.[0]?.message?.content || "{}";
+      const parsed = JSON.parse(raw);
+
+      setGeneratedContent({
+        seoTitle: parsed.seoTitle || "",
+        metaDescription: parsed.metaDescription || "",
+        productBullets: parsed.productBullets || [],
+      });
+    } catch (err) {
+      console.error("Groq API error:", err);
+      setGeneratedContent({
+        seoTitle: "Generation failed — try again",
+        metaDescription: "",
+        productBullets: [],
+      });
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   if (!product) {

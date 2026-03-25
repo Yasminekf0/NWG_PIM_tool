@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Product } from "@/types/product";
 import { Download, Pencil, X } from "lucide-react";
 
 interface ProductDetailProps {
   product: Product | null;
   onUpdateProduct: (product: Product) => void;
+  allProducts: Product[];
+  onExport: (products: Product[]) => void;
 }
 
 interface MetadataFieldProps {
@@ -43,9 +45,16 @@ function MetadataField({
   );
 }
 
-export function ProductDetail({ product, onUpdateProduct }: ProductDetailProps) {
+export function ProductDetail({
+  product,
+  onUpdateProduct,
+  allProducts,
+  onExport,
+}: ProductDetailProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedProduct, setEditedProduct] = useState<Product | null>(null);
+  const [showSaved, setShowSaved] = useState(false);
+  const saveEndTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   if (!product) {
     return (
@@ -61,6 +70,11 @@ export function ProductDetail({ product, onUpdateProduct }: ProductDetailProps) 
   };
 
   const handleCancel = () => {
+    if (saveEndTimeoutRef.current) {
+      clearTimeout(saveEndTimeoutRef.current);
+      saveEndTimeoutRef.current = null;
+    }
+    setShowSaved(false);
     setEditedProduct(null);
     setIsEditing(false);
   };
@@ -68,15 +82,24 @@ export function ProductDetail({ product, onUpdateProduct }: ProductDetailProps) 
   const handleSave = () => {
     if (editedProduct) {
       onUpdateProduct(editedProduct);
-      // TODO: Implement API call to save product changes
+      setShowSaved(true);
+      if (saveEndTimeoutRef.current) {
+        clearTimeout(saveEndTimeoutRef.current);
+      }
+      saveEndTimeoutRef.current = setTimeout(() => {
+        saveEndTimeoutRef.current = null;
+        setIsEditing(false);
+        setEditedProduct(null);
+        setShowSaved(false);
+      }, 2000);
+    } else {
+      setIsEditing(false);
+      setEditedProduct(null);
     }
-    setIsEditing(false);
-    setEditedProduct(null);
   };
 
   const handleExportCSV = () => {
-    // TODO: Implement CSV export functionality
-    console.log("Export CSV clicked");
+    onExport(allProducts);
   };
 
   const currentProduct = isEditing && editedProduct ? editedProduct : product;
@@ -189,6 +212,9 @@ export function ProductDetail({ product, onUpdateProduct }: ProductDetailProps) 
             >
               Save Changes
             </button>
+            {showSaved && (
+              <span className="text-sm text-green-600">Saved ✓</span>
+            )}
             <button
               onClick={handleCancel}
               className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-text-secondary hover:text-text-primary transition-colors"

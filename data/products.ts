@@ -12,6 +12,7 @@ export const mockProducts: Product[] = [
     amountOfPills: 30,
     daysOfUsage: 30,
     deliveryFrequency: "Monthly",
+    rawDescription: "",
     description: "Macoform is a natural liver support supplement containing artichoke and dandelion extracts. Designed to support your liver's natural detoxification processes and promote overall digestive health.",
   },
   {
@@ -23,6 +24,7 @@ export const mockProducts: Product[] = [
     amountOfPills: 60,
     daysOfUsage: 30,
     deliveryFrequency: "Monthly",
+    rawDescription: "",
     description: "Premium marine collagen peptides combined with hyaluronic acid and vitamin C. Supports skin elasticity, hydration, and reduces the appearance of fine lines and wrinkles.",
   },
   {
@@ -34,6 +36,7 @@ export const mockProducts: Product[] = [
     amountOfPills: 90,
     daysOfUsage: 90,
     deliveryFrequency: "Quarterly",
+    rawDescription: "",
     description: "High-absorption Coenzyme Q10 formula supporting cellular energy production. Essential for heart health, energy levels, and acts as a powerful antioxidant.",
   },
   {
@@ -45,6 +48,7 @@ export const mockProducts: Product[] = [
     amountOfPills: 120,
     daysOfUsage: 60,
     deliveryFrequency: "Bi-monthly",
+    rawDescription: "",
     description: "Complete daily multivitamin with 25 essential vitamins and minerals. Specially formulated for Scandinavian adults to support immune function, energy, and overall wellbeing.",
   },
   {
@@ -56,6 +60,7 @@ export const mockProducts: Product[] = [
     amountOfPills: 60,
     daysOfUsage: 30,
     deliveryFrequency: "Monthly",
+    rawDescription: "",
     description: "Advanced joint support formula with glucosamine, chondroitin, and MSM. Helps maintain healthy cartilage, supports joint mobility, and reduces stiffness.",
   },
   {
@@ -67,6 +72,7 @@ export const mockProducts: Product[] = [
     amountOfPills: 90,
     daysOfUsage: 45,
     deliveryFrequency: "Monthly",
+    rawDescription: "",
     description: "Comprehensive mobility support combining turmeric, boswellia, and collagen type II. Designed for active individuals seeking to maintain flexibility and comfortable movement.",
   },
 ];

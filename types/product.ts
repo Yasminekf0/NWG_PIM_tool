@@ -7,6 +7,7 @@ export interface Product {
   amountOfPills: number;
   daysOfUsage: number;
   deliveryFrequency: string;
+  rawDescription: string;
   description: string;
 }
 
